@@ -1,3 +1,27 @@
+VERSION='nightly-v25'
+MASTER_PWD="simpleprivatecloudsolutions"
+
+chkconfig ntpd on
+service ntpd restart
+
+#create a speedbot dir
+mkdir -p /usr/local/lib/python3.6/speedbot/
+
+#set the hostname to sb-xxxxx random digits
+echo "Setting the hostname."
+mv /etc/hostname /etc/hostname.old
+#RAND=$RANDOM
+
+NODEONE=$(($RANDOM % 99999999 + 10000000))
+NODETWO=$(($RANDOM % 99999 + 10000))
+
+HOSTNAME=sb-${NODETWO}
+
+#ciac node id
+NODEID=000-${NODEONE}-${NODETWO}
+
+echo $NODEID > /etc/nodeid
+
 #set up rbash
 ln -s /bin/bash /bin/rbash
 echo '/bin/rbash' >> /etc/shells
@@ -8,7 +32,7 @@ touch /bin/admin.sh
 (
 cat <<'EOP'
 #!/bin/rbash
-python2.7 /usr/local/lib/python2.7/transcirrus/interfaces/shell/coalesce.py
+python2.7 /usr/local/lib/python3.6/speedbot/interfaces/shell/action.py
 EOP
 ) >> /bin/admin.sh
 chmod +x /bin/admin.sh
@@ -27,7 +51,6 @@ sed -i 's/Defaults    requiretty/#Defaults    requiretty/g' /etc/sudoers
 #set the transuser account up in sudo
 (
 cat <<'EOP'
-transuser ALL=(ALL) NOPASSWD: ALL
 admin ALL=(ALL) NOPASSWD: ALL
 apache ALL=(ALL:ALL) NOPASSWD: ALL
 EOP
