@@ -1,5 +1,11 @@
-VERSION='nightly-v25'
-MASTER_PWD="simpleprivatecloudsolutions"
+#sudo apt-get update
+#sudo apt-get upgrade
+
+#install packages
+sudo apt-get install -y ntp
+
+VERSION='nightly-v1'
+MASTER_PWD="speedbotadmin"
 
 chkconfig ntpd on
 service ntpd restart
@@ -56,7 +62,5 @@ apache ALL=(ALL:ALL) NOPASSWD: ALL
 EOP
 ) >> /etc/sudoers
 
-#fix postgres user groups
-usermod -a -G postgres admin
-usermod -a -G postgres apache
-usermod -a -G postgres transuser
+#install docker
+#apt install docker.io=19.03.6-0ubuntu1~18.04.2 -V
