@@ -1,4 +1,12 @@
-sudo docker run -d --device /dev/gpiomem -p 10400:10400 -v /opt/speedbot-local:/opt/speedbot --name speedbot pitemp
+sudo docker run -d -h speedbot --network=host --privileged -v /opt/speedbot-data:/opt/speedbot-data --name speedbot -e PINS="28,27" -e INTERVAL=10 -e MQTTBROKER='192.168.1.61' -e MQTTPORT='8883' -e API='1.0' speedbot:latest
+
+#sudo docker run -ti -h speedbot --network=host --privileged -p 10400:10400 -v /opt/speedbot-data:/opt/speedbot-data --name speedbot \
+#-e PINS="28,27" \
+#-e INTERVAL=10 \
+#-e MQTTBROKER='192.168.1.61' \
+#-e MQTTPORT='8883' \
+#-e API='1.0' \
+#speedbot:latest bash
 
 #-e SENSORTYP='DHT11' \
 #-e SCALE='Fahrenheit' \
@@ -12,3 +20,4 @@ sudo docker run -d --device /dev/gpiomem -p 10400:10400 -v /opt/speedbot-local:/
 #-e SSLCERTPATH='/opt/pitemp/certs' \
 #-e SSLCERT='ca.crt' \
 #pitemp
+#--privileged

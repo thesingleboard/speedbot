@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python
 import os
 import socket
 import time
@@ -22,28 +22,32 @@ INTERVAL = int(INTERVAL)
 #physical network name wlan0 or eth0
 PHYSNET = os.getenv('PHYSNET',None)
 
+#DB directory
+DB_PATH = os.getenv('DB_PATH','/opt/speedbot-data/')
+
 #mgtt broker host, IP or URL
-MQTTBROKER = os.getenv('MQTTBROKER',None)
+#MQTTBROKER = os.getenv('MQTTBROKER',None)
 
-MQTTPORT = os.getenv('MQTTPORT',None)
-MQTTPORT = int(MQTTPORT)
+#MQTTPORT = os.getenv('MQTTPORT',None)
+#MQTTPORT = int(MQTTPORT)
 
-SSLCERTPATH = os.getenv('SSLCERTPATH',None)
+#SSLCERTPATH = os.getenv('SSLCERTPATH',None)
 
-SSLCERT = os.getenv('SSLCERT',None)
+#SSLCERT = os.getenv('SSLCERT',None)
 
 #get the epoc time 
 STARTOFTIME = calendar.timegm(time.gmtime())
 
+LCD_ADDR = 0x3f
+
 CONFIG = {  'API':API,
             'HOSTNAME':HOSTNAME,
             'PINS':PINS,
-            'SLEEP':SLEEP,
             'INTERVAL':INTERVAL,
-            'PHYSNET':PHYSNET,
-            'MQTTBROKER':MQTTBROKER,
-            'MQTTPORT':MQTTPORT,
-            'SSLCERTPATH':SSLCERTPATH,
-            'SSLCERT':SSLCERT,
-            'STARTOFTIME':STARTOFTIME
+            #'MQTTBROKER':MQTTBROKER,
+            #'MQTTPORT':MQTTPORT,
+            #'SSLCERTPATH':SSLCERTPATH,
+            #'SSLCERT':SSLCERT,
+            'STARTOFTIME':STARTOFTIME,
+            'LCD_ADDR':LCD_ADDR
             }

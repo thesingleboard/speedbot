@@ -1,66 +1,81 @@
-#sudo apt-get update
-#sudo apt-get upgrade
+sudo apt-get update
+sudo apt-get upgrade
 
-#install packages
-sudo apt-get install -y ntp
+apt install docker.io
+systemctl enable docker
+systemctl start docker
 
-VERSION='nightly-v1'
-MASTER_PWD="speedbotadmin"
-
-chkconfig ntpd on
-service ntpd restart
-
-#create a speedbot dir
-mkdir -p /usr/local/lib/python3.6/speedbot/
-
-#set the hostname to sb-xxxxx random digits
-echo "Setting the hostname."
-mv /etc/hostname /etc/hostname.old
-#RAND=$RANDOM
-
+#Generate an unchangable nodeID
 NODEONE=$(($RANDOM % 99999999 + 10000000))
 NODETWO=$(($RANDOM % 99999 + 10000))
-
-HOSTNAME=sb-${NODETWO}
-
-#ciac node id
+HOSTNAME=ciac-${NODETWO}
 NODEID=000-${NODEONE}-${NODETWO}
-
 echo $NODEID > /etc/nodeid
+chown speedbot:speedbot /etc/nodeid
+chmod 0444 /etc/nodeid
+
+#Create datastores
+mkdir -p /home/speedbot
+mkdir -p /opt/speedbot-data
+
+#speedbot user
+useradd -U -d /home/speedbot -s /bin/bash speedbot
+chown speedbot:speedbot /home/speedbot
+echo -e 'speedbot\nspeedbot\n' | passwd speedbot
+
+#add speedbot to the docker group
+usermod -aG docker speedbot
 
 #set up rbash
 ln -s /bin/bash /bin/rbash
 echo '/bin/rbash' >> /etc/shells
 echo '/bin/admin.sh' >> /etc/shells
 
-#create admin shell - admin.sh
+#Custom shell for config
 touch /bin/admin.sh
 (
 cat <<'EOP'
 #!/bin/rbash
-python2.7 /usr/local/lib/python3.6/speedbot/interfaces/shell/action.py
+python /usr/local/lib/python2.7/transcirrus/interfaces/shell/coalesce.py
 EOP
 ) >> /bin/admin.sh
-chmod +x /bin/admin.sh
-chown transuser:transystem /bin/admin.sh
 
-#add the admin user
-useradd -d /home/admin -g transystem -s /bin/admin.sh admin
+chmod +x /bin/admin.sh
+chown speedbot:speedbot /bin/admin.sh
+
+#create an admin for the shell config
+useradd -d /home/admin -g speedbot -s /bin/admin.sh admin
 
 #set admin default password
 echo -e 'password\npassword\n' | passwd admin
 
-#make it so apaceh can run sudo
-sed -i 's/Defaults    requiretty/#Defaults    requiretty/g' /etc/sudoers
+# start and stop the container
+cp -f systemd/start-speedbot /bin
+cp -f systemd/stop-speedbot /bin
+cp -f systemd/restart-speedbot /bin
+cp -f systemd/fresh-start-speedbot /bin
+cp -f systemd/factory-reset-speedbot /bin
 
-#echo "Setting up transuser sudo."
-#set the transuser account up in sudo
-(
-cat <<'EOP'
-admin ALL=(ALL) NOPASSWD: ALL
-apache ALL=(ALL:ALL) NOPASSWD: ALL
-EOP
-) >> /etc/sudoers
+chmod 755 /bin/start-speedbot
+chmod 755 /bin/stop-speedbot
+chmod 755 /bin/restart-speedbot
+chmod 755 /bin/fresh-start-speedbot
+chmod 755 /bin/factory-reset-speedbot
 
-#install docker
-#apt install docker.io=19.03.6-0ubuntu1~18.04.2 -V
+cp etc/speedbot.cfg /etc/speedbot.cfg
+
+source /etc/speedbot.cfg
+
+#cp -f systemd/speedbot.service /etc/systemd/system/
+
+#chmod 664 /etc/systemd/system/speedbot.service
+
+#systemctl daemon-reload
+
+#docker pull the latest speedbot
+
+#docker tag the latest speedbot for factory reset
+
+docker run -d -h speedbot --network=host --privileged -p 10500:10500 -v /opt/speedbot-data:/opt/speedbot-data --name speedbot -e PINS=$PINS -e INTERVAL=$INTERVAL -e MQTTBROKER=$MQTTBROKER -e MQTTPORT=$MQTTPORT -e API=$API speedbot:$VERSION
+
+#systemctl enable speedbot.service
