@@ -14,9 +14,10 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys $INSTALL_KEY
 RUN echo "deb https://ookla.bintray.com/debian $DEB_DISTRO main" | tee  /etc/apt/sources.list.d/speedtest.list 
 
 RUN apt-get update;apt-get install -y curl;apt-get install -y python3-pip;apt install -y python3-dev;apt install -y python-imaging; apt install -y python-smbus;apt install -y i2c-tools; \
-apt install -y python3-pil;apt install -y python3-setuptools;apt-get install gfortran;apt-get install -y libgpiod2;apt install -y python3-openssl;apt install -y build-essential;apt install -y libffi-dev
+apt install -y python3-pil;apt install -y python3-setuptools;apt-get install gfortran;apt-get install -y libgpiod2;apt install -y python3-openssl; \
+apt install -y build-essential;apt install -y libffi-dev;apt install -y iproute2;apt-get install -y speedtest
 
-RUN apt-get install speedtest
+#RUN apt-get install -y speedtest
 
 RUN mkdir -p $INSTALL_PATH
 RUN mkdir -p /opt/speedbot-data

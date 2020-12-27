@@ -14,6 +14,8 @@ echo $NODEID > /etc/nodeid
 chown speedbot:speedbot /etc/nodeid
 chmod 0444 /etc/nodeid
 
+hostnamectl set-hostname $NODEID
+
 #Create datastores
 mkdir -p /home/speedbot
 mkdir -p /opt/speedbot-data
@@ -32,11 +34,19 @@ echo '/bin/rbash' >> /etc/shells
 echo '/bin/admin.sh' >> /etc/shells
 
 #Custom shell for config
+#touch /bin/admin.sh
+#(
+#cat <<'EOP'
+##!/bin/rbash
+#python /usr/local/lib/python2.7/transcirrus/interfaces/shell/coalesce.py
+#EOP
+#) >> /bin/admin.sh
+
 touch /bin/admin.sh
 (
 cat <<'EOP'
 #!/bin/rbash
-python /usr/local/lib/python2.7/transcirrus/interfaces/shell/coalesce.py
+docker exec python interface/botcli.py
 EOP
 ) >> /bin/admin.sh
 
@@ -79,3 +89,6 @@ source /etc/speedbot.cfg
 docker run -d -h speedbot --network=host --privileged -p 10500:10500 -v /opt/speedbot-data:/opt/speedbot-data --name speedbot -e PINS=$PINS -e INTERVAL=$INTERVAL -e MQTTBROKER=$MQTTBROKER -e MQTTPORT=$MQTTPORT -e API=$API speedbot:$VERSION
 
 #systemctl enable speedbot.service
+
+#Set speedbot container to fire up on system boot/reboot
+sed -i 's/exit\ 0/source\ \/etc\/speedbot.cfg\ndocker\ start\ speedbot\nexit\ 0/g' /etc/rc.local
