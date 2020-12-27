@@ -2,7 +2,9 @@ FROM python:3.8.2-slim-buster
 MAINTAINER Jonathan Arrance <jonathan@thesingleboard.io>
 
 ENV INSTALL_PATH /opt/speedbot
+ENV INTERFACE /opt/speedbot/interface
 #ENV CERT_PATH /opt/pitemp/certs
+
 RUN apt-get update; apt-get install -y gnupg1 apt-transport-https dirmngr
 
 ENV INSTALL_KEY=379CE192D401AB61
@@ -25,18 +27,21 @@ RUN mkdir -p /opt/speedbot-data
 WORKDIR $INSTALL_PATH
 
 RUN pip3 install --upgrade pip
-ADD requirements.txt /
-RUN pip3 install -r /requirements.txt
+ADD core/requirements.txt /
+RUN pip3 install -r core/requirements.txt
 
 #pull rockpi gpio
 ADD /R64 /usr/local/lib/python3.8/
 
-ADD speedbot.py $INSTALL_PATH
-ADD speedbot_lib.py $INSTALL_PATH
-ADD lcd_lib.py $INSTALL_PATH
-ADD run-app.py $INSTALL_PATH
-ADD entrypoint.sh $INSTALLPATH
-ADD settings.py $INSTALL_PATH
+ADD core/speedbot.py $INSTALL_PATH
+ADD core/speedbot_lib.py $INSTALL_PATH
+ADD core/lcd_lib.py $INSTALL_PATH
+ADD core/run-app.py $INSTALL_PATH
+ADD core/entrypoint.sh $INSTALLPATH
+ADD core/settings.py $INSTALL_PATH
+ADD interface/cli/botcli.py $INTERFACE/cli
+ADD interface/web/bootapi.py $INTERFACE/web
+ADD interface/web/interface.py $INTERFACE/web
 #ADD ca.crt $CERT_PATH
 
 #MQTT - secure
