@@ -38,6 +38,8 @@ DB_PATH = os.getenv('DB_PATH','/opt/speedbot-data/')
 #get the epoc time 
 STARTOFTIME = calendar.timegm(time.gmtime())
 
+TEMP_SCALE = os.getenv('TEMP_SCALE','F')
+
 LCD_ADDR = 0x3f
 
 CONFIG = {  'API':API,
@@ -49,5 +51,6 @@ CONFIG = {  'API':API,
             #'SSLCERTPATH':SSLCERTPATH,
             #'SSLCERT':SSLCERT,
             'STARTOFTIME':STARTOFTIME,
-            'LCD_ADDR':LCD_ADDR
+            'LCD_ADDR':LCD_ADDR,
+            'TEMP_SCALE':TEMP_SCALE
             }

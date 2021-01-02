@@ -1,9 +1,15 @@
+#!/bin/bash -x
+
 sudo apt-get update
 sudo apt-get upgrade
 
 apt install docker.io
 systemctl enable docker
 systemctl start docker
+
+apt-get install network-manager
+systemctl start NetworkManager.service
+systemctl enable NetworkManager.service
 
 #Generate an unchangable nodeID
 NODEONE=$(($RANDOM % 99999999 + 10000000))
@@ -33,20 +39,15 @@ ln -s /bin/bash /bin/rbash
 echo '/bin/rbash' >> /etc/shells
 echo '/bin/admin.sh' >> /etc/shells
 
-#Custom shell for config
-#touch /bin/admin.sh
-#(
-#cat <<'EOP'
-##!/bin/rbash
-#python /usr/local/lib/python2.7/transcirrus/interfaces/shell/coalesce.py
-#EOP
-#) >> /bin/admin.sh
+#copy botcli
+cp device/botcli.py /opt/botcli.py
 
+#Custom shell for config
 touch /bin/admin.sh
 (
 cat <<'EOP'
 #!/bin/rbash
-docker exec python interface/botcli.py
+python /opt/botcli.py
 EOP
 ) >> /bin/admin.sh
 
@@ -83,12 +84,16 @@ source /etc/speedbot.cfg
 #systemctl daemon-reload
 
 #docker pull the latest speedbot
-
+docker pull speedbot:stable
 #docker tag the latest speedbot for factory reset
+docker tag speedbot:stable factory/speedbot:factory
 
+#fire up the speedbot container as a daemon
 docker run -d -h speedbot --network=host --privileged -p 10500:10500 -v /opt/speedbot-data:/opt/speedbot-data --name speedbot -e PINS=$PINS -e INTERVAL=$INTERVAL -e MQTTBROKER=$MQTTBROKER -e MQTTPORT=$MQTTPORT -e API=$API speedbot:$VERSION
 
 #systemctl enable speedbot.service
 
 #Set speedbot container to fire up on system boot/reboot
-sed -i 's/exit\ 0/source\ \/etc\/speedbot.cfg\ndocker\ start\ speedbot\nexit\ 0/g' /etc/rc.local
+#sed -i 's/exit\ 0/source\ \/etc\/speedbot.cfg\ndocker\ start\ speedbot\nexit\ 0/g' /etc/rc.local
+#NOTE: Also changed rc.local to use bash
+sed -i 's/exit\ 0/\/bin\/start-speedbot\nexit\ 0/g' /etc/rc.local

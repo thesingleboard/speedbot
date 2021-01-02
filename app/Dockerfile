@@ -2,7 +2,7 @@ FROM python:3.8.2-slim-buster
 MAINTAINER Jonathan Arrance <jonathan@thesingleboard.io>
 
 ENV INSTALL_PATH /opt/speedbot
-ENV INTERFACE /opt/speedbot/interface
+ENV INTERFACE /opt/speedbot/web
 #ENV CERT_PATH /opt/pitemp/certs
 
 RUN apt-get update; apt-get install -y gnupg1 apt-transport-https dirmngr
@@ -22,13 +22,14 @@ apt install -y build-essential;apt install -y libffi-dev;apt install -y iproute2
 #RUN apt-get install -y speedtest
 
 RUN mkdir -p $INSTALL_PATH
+RUN mkdir -p $INTERFACE
 RUN mkdir -p /opt/speedbot-data
 
 WORKDIR $INSTALL_PATH
 
 RUN pip3 install --upgrade pip
 ADD core/requirements.txt /
-RUN pip3 install -r core/requirements.txt
+RUN pip3 install -r /requirements.txt
 
 #pull rockpi gpio
 ADD /R64 /usr/local/lib/python3.8/
@@ -39,9 +40,8 @@ ADD core/lcd_lib.py $INSTALL_PATH
 ADD core/run-app.py $INSTALL_PATH
 ADD core/entrypoint.sh $INSTALLPATH
 ADD core/settings.py $INSTALL_PATH
-ADD interface/cli/botcli.py $INTERFACE/cli
-ADD interface/web/bootapi.py $INTERFACE/web
-ADD interface/web/interface.py $INTERFACE/web
+ADD web/botapi.py $INTERFACE
+ADD web/interface.py $INTERFACE
 #ADD ca.crt $CERT_PATH
 
 #MQTT - secure

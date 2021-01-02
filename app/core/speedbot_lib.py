@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import subprocess
+import os
 import datetime
 import settings
 import logging
@@ -51,7 +52,7 @@ class speedbot():
         """
         out_array = []
         try:
-            proc = subprocess.Popen("sudo hostname", stdout=subprocess.PIPE, shell=True)
+            proc = subprocess.Popen("hostname", stdout=subprocess.PIPE, shell=True)
             (output, err) = proc.communicate()
             hostname = output.decode('utf-8').strip()
         except Exception as e:
@@ -67,16 +68,41 @@ class speedbot():
         OUTPUT: None
         NOTES: None
         """
+        logging.info('Setting the system hostname.')
+        
         if hostname == None:
             hostname = settings.HOSTNAME
 
         try:
-            proc = subprocess.Popen("hostnamectl set-hostname %s"%hostname, stdout=subprocess.PIPE, shell=True)
+            proc = subprocess.Popen("hostname %s"%hostname, stdout=subprocess.PIPE, shell=True)
             (output,err) = proc.communicate()
             out_array = output.decode('utf-8').strip().split()
+            logging.info('Set the hostname to %s'%hostname)
         except Exception as e:
             logging.error(e)
             logging.error("Could not set the Speedbot hostname.")
+
+        #Set the hostname permenately
+        try:
+            if os.path.exists('/etc/hostname'):
+                logging.info('Removed the hostname file and rewrote with new hostname %s'%hostname)
+                os.remove('/etc/hostname')
+            else:
+                loggin.warn('No /etc/hostname file')
+        except Exception as e:
+            logging.error(e)
+            logging.error('Could not delete /etc/hostname file.')
+
+        #Write the hostname
+        try:
+            new_file = open("/etc/hostname","w")
+            new_file.write(hostname)
+            new_file.close()
+            logging.info('Wrote new hostname file.')
+        except Exception as e:
+            logging.error(e)
+            logging.error("Could not create new hostname file.")
+
 
     def list_nics(self):
         """
@@ -112,15 +138,22 @@ class speedbot():
             ip = e
 
         try:
+            proc3 = subprocess.Popen("ip addr | grep '%s' -A2 | grep 'inet' | head -1 | awk '{print $2}' | cut -f2  -d'/'"%nic, stdout=subprocess.PIPE, shell=True)
+            (output3, err3) = proc3.communicate()
+            cidr = str(output3.decode('utf-8').strip())
+        except Exception as e:
+            cidr = e
+
+        try:
             proc2 = subprocess.Popen("ip route | awk '/default/ { print $3 }'", stdout=subprocess.PIPE, shell=True)
             (output2, err2) = proc2.communicate()
             gateway = str(output2.decode('utf-8').strip())
         except Exception as e:
             gateway = e
 
-        return {'ip':ip, 'gateway':gateway}
+        return {'ip':ip, 'gateway':gateway,'cidr':cidr}
 
-    def set_nic_ip_info(self, input_dict)
+    def set_nic_ip_info(self, input_dict):
         #input_dict - nic
         # - IP
         # - Gateway
@@ -132,9 +165,10 @@ class speedbot():
         DESC: Get the location of the speedbit based on the external IP
         INPUT: ext_ip - ip of the internet faceing IP
         OUTPUT: 
+        NOTES: Get the external IP of the network(outward faceing NAT) from the check_speed function
         """
         try:
-            output = requests.get("https://geolocation-db.com/json/%s&position=true"%(ext_ip).json())
+            output = requests.get("https://geolocation-db.com/json/ext_ip&position=true").json()
         except Exception as e:
             output = 'unknown'
             logging.error('Could not determin the location')
@@ -152,7 +186,7 @@ class speedbot():
         try:
             f = open('/etc/nodeid', 'r')
             for line in f:
-                    node_id = line
+                    node_id = line.strip()
             f.close()
         except:
             node_id = "ERROR000000000"
@@ -203,9 +237,7 @@ class speedbot():
             
         #make the out data useful
         if up:
-            out_dict['days'] = out[1]
-            out_dict['hours'] = out[3]
-            out_dict['minutes'] = out[5]
+            out_dict['uptime'] = out
             out_dict['start_date'] = sout[0]
             out_dict['start_time'] = sout[1]
 
@@ -282,6 +314,26 @@ class speedbot():
             out_dict['%s'%(k)] = sout[0]
 
         return out_dict
+
+    def get_system_status(self):
+        """
+        DESC:  Return a system status overview
+        INPUT: None
+        OUTPUT: out_dict - hostname
+                                       - total_mem
+                                       - cpu_temp
+                                       - ip
+                                       - uptime
+                                       - node_id
+        """
+        hostname = self.get_hostname()
+        cpu_temp = self.get_cpu_temp()
+        mem = self.get_system_memory()
+        ip = self.get_nic_ip_info(settings.PHYSNET)
+        uptime = self.get_uptime()
+        nodeid = self.get_node_id()
+
+        return {'hostname':hostname,'cpu_temp':cpu_temp['temp'],'total_mem':mem['total_mem'],'ip':ip['ip'],'uptime':uptime,'node_id':nodeid}
 
 ####MQTT######
     '''
