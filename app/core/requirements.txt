@@ -15,3 +15,4 @@ utils==1.0.1
 oauthlib==2.0.1
 smbus==1.1.post2
 pythondialog==3.5.1
+docker==4.4.1
