@@ -103,63 +103,6 @@ class speedbot():
             logging.error(e)
             logging.error("Could not create new hostname file.")
 
-
-    def list_nics(self):
-        """
-        DESC: List the available nics
-        INPUT: None
-        OUTPUT: out_array - list of nics
-        NOTES: None
-        """
-        out_array = []
-        try:
-            proc = subprocess.Popen("ls -I br* -I lo -I vir* /sys/class/net/", stdout=subprocess.PIPE, shell=True)
-            (output, err) = proc.communicate()
-            out_array = output.decode('utf-8').strip().split()
-        except Exception as e:
-            logging.error(e)
-            logging.error("Could not get the list of nics")
-
-        return out_array
-
-    def get_nic_ip_info(self, nic):
-        """
-        DESC: Get the IP of the primary nic
-        INPUT: nic - the name of the primary nic
-        OUTPUT out_dict - ip
-                        - gateway
-        NOTES: None
-        """
-        try:
-            proc = subprocess.Popen("ip addr | grep '%s' -A2 | grep 'inet' | head -1 | awk '{print $2}' | cut -f1  -d'/'"%nic, stdout=subprocess.PIPE, shell=True)
-            (output, err) = proc.communicate()
-            ip = str(output.decode('utf-8').strip())
-        except Exception as e:
-            ip = e
-
-        try:
-            proc3 = subprocess.Popen("ip addr | grep '%s' -A2 | grep 'inet' | head -1 | awk '{print $2}' | cut -f2  -d'/'"%nic, stdout=subprocess.PIPE, shell=True)
-            (output3, err3) = proc3.communicate()
-            cidr = str(output3.decode('utf-8').strip())
-        except Exception as e:
-            cidr = e
-
-        try:
-            proc2 = subprocess.Popen("ip route | awk '/default/ { print $3 }'", stdout=subprocess.PIPE, shell=True)
-            (output2, err2) = proc2.communicate()
-            gateway = str(output2.decode('utf-8').strip())
-        except Exception as e:
-            gateway = e
-
-        return {'ip':ip, 'gateway':gateway,'cidr':cidr}
-
-    def set_nic_ip_info(self, input_dict):
-        #input_dict - nic
-        # - IP
-        # - Gateway
-        # dhcp true/false - default false
-        pass
-
     def get_location(self, ext_ip):
         """
         DESC: Get the location of the speedbit based on the external IP
@@ -175,47 +118,15 @@ class speedbot():
 
         return output
 
-    def get_node_id(self):
-        """
-        DESC: Get the system ID and use it as the unchangebale node id.
-        INPUT: None
-        OUTPUT: node_id
-        """
-        # Extract serial from cpuinfo file
-        node_id = "000-00000000-00000"
-        try:
-            f = open('/etc/nodeid', 'r')
-            for line in f:
-                    node_id = line.strip()
-            f.close()
-        except:
-            node_id = "ERROR000000000"
-
-        return node_id
-
-    def get_mac(self, nic):
-        """
-        DESC: return the MAC(serial) of the first ethernet adapter used to identify the system.
-        """
-        mac = '00:00:00:00:00:00'
-        try:
-            proc = subprocess.Popen("ip addr | grep '%s' -A2 | grep 'link/ether' | head -1 | awk '{print $2}' | cut -f1  -d'/'"%nic, stdout=subprocess.PIPE, shell=True)
-            (output, err) = proc.communicate()
-            mac = output.decode("utf-8").strip()
-        except Exception as e:
-            mac = e
-
-        return mac
-
     def get_uptime(self):
         """
         DESC: Run get system uptime
         INPUT: None
         OUTPUT: out_dict - days
-                                       - hours
-                                       - minutes
-                                       - start_date
-                                       - start_time
+                         - hours
+                         - minutes
+                         - start_date
+                         - start_time
         """
         up = True
         out_dict = {}
@@ -250,7 +161,7 @@ class speedbot():
         DESC: Get the cpu temperature in C or F
         INPUT: None
         OUTPUT:  out_dict - temp
-                                        - scale
+                          - scale
         """
         raw = open("/etc/armbianmonitor/datasources/soctemp", "r")
         raw_temp = raw.read()
@@ -282,11 +193,11 @@ class speedbot():
         DESC:  Get the system memory stats
         INPUT: None
         OUTPUT: out_dict - total_mem
-                                       - used_mem
-                                       - free_mem
-                                       - total_swap
-                                       - used_swap
-                                       - free_swap
+                        - used_mem
+                        - free_mem
+                        - total_swap
+                        - used_swap
+                        - free_swap
         """
         out_dict = {}
         memory = {'total_mem':'$2', 'used_mem':'$3', 'free_mem':'$4'}
@@ -320,11 +231,11 @@ class speedbot():
         DESC:  Return a system status overview
         INPUT: None
         OUTPUT: out_dict - hostname
-                                       - total_mem
-                                       - cpu_temp
-                                       - ip
-                                       - uptime
-                                       - node_id
+                        - total_mem
+                        - cpu_temp
+                        - ip
+                        - uptime
+                        - node_id
         """
         hostname = self.get_hostname()
         cpu_temp = self.get_cpu_temp()
@@ -408,6 +319,12 @@ class speedbot():
         #    out = False
         #    logging.error(e)
         #    logging.error("Could not insert data %s into the database"%(input_dict)
+
+    def db_read(self):
+        pass
+    
+    def db_purge(self):
+        pass
 
 ####System#####
     def check_speed(self):
