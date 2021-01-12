@@ -1,0 +1,4 @@
+#!/bin/bash
+source /etc/speedbot.cfg
+sudo docker stop speedbot
+sudo docker start speedbot

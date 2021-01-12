@@ -1,0 +1,14 @@
+[Unit]
+Description=Speedbot container
+Requires=docker.service
+After=docker.service network.target
+
+[Service]
+Restart=always
+ExecStartPre=source /etc/speedbot.cfg
+ExecStart=/bin/start_speedbot
+ExecStop=/bin/stop_speedbot
+ExecReload=/bin/restart_speedbot
+
+[Install]
+WantedBy=default.target

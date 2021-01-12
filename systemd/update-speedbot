@@ -1,0 +1,10 @@
+#!/bin/bash
+
+source /etc/speedbot.cfg
+
+docker stop speedbot
+docker rm speedbot
+
+docker pull speedbot:stable
+
+docker run -d -h speedbot --network=host --privileged -p 10500:10500 -v /opt/speedbot-data:/opt/speedbot-data --name speedbot -e PINS=$PINS -e INTERVAL=$INTERVAL -e MQTTBROKER=$MQTTBROKER -e MQTTPORT=$MQTTPORT -e API=$API speedbot:$VERSION

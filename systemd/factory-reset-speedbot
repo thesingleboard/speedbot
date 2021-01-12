@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#stop and remove the running container
+
+#remove the stable image
+
+#retag the factory to stable
+
+#bring up the container
+
+#reset device ip
+
+#reboot the device
+
