@@ -10,52 +10,41 @@ If you are a hobbiest you may have all of the parts needed to build out the Spee
 * [Iconikal Rockchip RK3328] - The Speedbot computer
 * [16x2 Serial LCD display I2C] - 16 column LCD display.
 * [5V 3A Power adapter] - 5V power adapter
+* [Package] - The total package
 
 [Iconikal Rockchip RK3328]: <https://liliputing.com/2020/09/this-10-single-board-computer-is-faster-than-a-raspberry-pi-3.html>
-[16x2 Serial LCD]: <https://circuitdigest.com/article/16x2-lcd-display-module-pinout-datasheet/>
+[16x2 Serial LCD display I2C]: <https://circuitdigest.com/article/16x2-lcd-display-module-pinout-datasheet/>
+[5V 3A Power adapter]: <https://www.ebay.com/itm/AC-Converter-Adapter-DC-5V-3A-Power-Supply-Charger-5-5mm-x-2-1mm-US-3000mA-/271505054908>
 [Package]: <https://www.amazon.com/gp/product/B0868WSTXH/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1>
 
 ## Software libraries needed
-All of the codeing for PiTemp is done using Python3. The reason I chose Python to build PiTemp is because it is easy to understand and can be picked up easily. It isalso one of the mpost popular programming langauges around, and can be used to build everything from simple scripts to machine learning alrorythems.
+Speedbot is coded using Python3. The reason I chose Python to build Speedbot is because it is easy to understand and easy to pick up. It is also one of the most popular programming langauges around, and can be used to build everything from simple scripts to machine learning algorythems.
 
-* [OS] - Raspberry Pi OS/Raspbian 9
+* [OS] - Armbian
 * [Python3] - The base language used in PiTemp.
-* [AdafruitDHT] - An open source DHT11 control library.
-* [AdafruitSSD1306] - An open source OLED control library.
 * [PahoMqtt] - The Pyhton MQTT library used to send data.
 * [Sqlite3] - A simple database used to store metrics.
 * [Schedule] - The Python time scheduling library.
-* [PIL] - Python imaging library.
-* [RpiGPIO] - Python class to control Rpi GPIO interface.
+* [R64GPIO] - Python class to control Rpi GPIO interface.
 * [jinja2] - Expressive template libraryBlinka.
-* [Blinka] - Adafruit Blinka provides a programming interface for Rpi microcontroller.
-* [PlatformDetect] - Adafruit best guess platform detection library
 * [Pureio] - Pure Python access to SPI and I2C
 
 [Python3]: <https://www.python.org/>
-[AdafruitDHT]: <https://github.com/adafruit/Adafruit_Python_DHT>
-[AdafruitSSD1306]: <https://github.com/adafruit/Adafruit_SSD1306>
 [PahoMqtt]: <https://www.eclipse.org/paho/>
 [Sqlite3]: <https://docs.python.org/3/library/sqlite3.html>
 [Schedule]: <https://pypi.org/project/schedule/>
-[PIL]: <https://www.pythonware.com/products/pil/>
-[RpiGPIO]: <https://pypi.org/project/RPi.GPIO/>
+[R64GPIO]: <https://pypi.org/project/RPi.GPIO/>
 [jinja2]: <https://pypi.org/project/Jinja2/>
-[Blinka]: <https://pypi.org/project/Adafruit-Blinka/>
-[PlatformDetect]: <https://pypi.org/project/Adafruit-PlatformDetect/>
 [Pureio]: <https://github.com/adafruit/Adafruit_Python_PureIO/tree/1.0.4>
-[OS]: <https://www.raspberrypi.org/downloads/>
+[OS]: <https://www.armbian.com/newsflash/armbian-20-08-caple/>
 
 ## Python library versions
-|  Library | Version  |
+| Library | Version  |
 | ------------ | ------------ |
-|  rpi.gpio |  0.7.0 |
-|  jinja2 | 2.10.1  |
-|  adafruit-blinka |  4.2.0 |
-|  schedule | 0.6.0  |
-| adafruit-ssd1306  | 1.6.2  |
-| adafruit-dht | 1.4.0 |
-| adafruit-platformdetect | 2.5.0 |
+| rpi.gpio |  0.7.0 |
+| jinja2 | 2.10.1  |
+| adafruit-blinka |  4.2.0 |
+| schedule | 0.6.0  |
 | adafruit-pureio | 1.0.4 |
 | paho-mqtt | 1.5.0 |
 | gunicorn | 20.0.4 |
