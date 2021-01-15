@@ -10,12 +10,10 @@ If you are a hobbiest you may have all of the parts needed to build out the Spee
 * [Iconikal Rockchip RK3328] - The Speedbot computer
 * [16x2 Serial LCD display I2C] - 16 column LCD display.
 * [5V 3A Power adapter] - 5V power adapter
-* [Package] - The total package
 
 [Iconikal Rockchip RK3328]: <https://liliputing.com/2020/09/this-10-single-board-computer-is-faster-than-a-raspberry-pi-3.html>
 [16x2 Serial LCD display I2C]: <https://circuitdigest.com/article/16x2-lcd-display-module-pinout-datasheet/>
 [5V 3A Power adapter]: <https://www.ebay.com/itm/AC-Converter-Adapter-DC-5V-3A-Power-Supply-Charger-5-5mm-x-2-1mm-US-3000mA-/271505054908>
-[Package]: <https://www.amazon.com/gp/product/B0868WSTXH/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1>
 
 ## Software libraries needed
 Speedbot is coded using Python3. The reason I chose Python to build Speedbot is because it is easy to understand and easy to pick up. It is also one of the most popular programming langauges around, and can be used to build everything from simple scripts to machine learning algorythems.
@@ -57,7 +55,7 @@ Speedbot is coded using Python3. The reason I chose Python to build Speedbot is 
 # Part 2 - Build the Speedbot
 ## Set up the Speedbot
 ## Build a simple MQTT broker
-In order to develop and test the PiTemp and the MQTT protocol, you will need to deploy a simple broker to recive the data sent by the PiTemp. The MQTT protocol uses SSL to protect data, and as a best practice should be used in IoT communication channels. The MQTT protocol is used in IoT applications because of it speed and the fault tolerant nature of the protocol.
+In order to develop and test the Speedbot and the MQTT protocol, you will need to deploy a simple broker to recive the data sent by the Speedbot. The MQTT protocol uses SSL to protect data, and as a best practice should be used in IoT communication channels. The MQTT protocol is used in IoT applications because of it speed and the fault tolerant nature of the protocol.
 
 MQTT - https://mqtt.org/
 
@@ -144,4 +142,17 @@ openssl x509 -passin pass:mynewpassword -req -in server.csr -CA ca.crt -CAkey ca
 ```
 # Part 3 - How it works
 ## Hardware Components
+
+## Protocols
+
+### MQTT Protocol
+
+<img src="./images/MQTT-hor.png">
+
+MQTT is a lightweight publish/subscribe messaging protocol designed for M2M (machine to machine) telemetry in low bandwidth environments.
+
+URL - http://mqtt.org
+
+URl - http://www.steves-internet-guide.com/mqtt/
+
 # Part 4 - Extra Credit
