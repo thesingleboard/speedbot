@@ -10,10 +10,12 @@ If you are a hobbiest you may have all of the parts needed to build out the Spee
 * [Iconikal Rockchip RK3328] - The Speedbot computer
 * [16x2 Serial LCD display I2C] - 16 column LCD display.
 * [5V 3A Power adapter] - 5V power adapter
+* [Purchase] - Buy the board!
 
 [Iconikal Rockchip RK3328]: <https://liliputing.com/2020/09/this-10-single-board-computer-is-faster-than-a-raspberry-pi-3.html>
 [16x2 Serial LCD display I2C]: <https://circuitdigest.com/article/16x2-lcd-display-module-pinout-datasheet/>
 [5V 3A Power adapter]: <https://www.ebay.com/itm/AC-Converter-Adapter-DC-5V-3A-Power-Supply-Charger-5-5mm-x-2-1mm-US-3000mA-/271505054908>
+[Purchase]: <https://pine64.com/product/rock64-single-board-computer/?v=0446c16e2e66>
 
 ## Software libraries needed
 Speedbot is coded using Python3. The reason I chose Python to build Speedbot is because it is easy to understand and easy to pick up. It is also one of the most popular programming langauges around, and can be used to build everything from simple scripts to machine learning algorythems.
@@ -141,8 +143,61 @@ openssl x509 -passin pass:mynewpassword -req -in server.csr -CA ca.crt -CAkey ca
  360
 ```
 # Part 3 - How it works
+
 ## Hardware Components
 
+A standard Raspberry PI can be used for this project as well, however I am not guranteeing anything will work out of the box. The GPIO interface on the Ikonical Rockpi is compatible with RPI GPIO, but it has not been tested.
+
+**Rockpi SBC specs**
+
+
+
+```
+Rockchip RK3328 Quad-Core SOC with Mali 450MP2
+LPDDR3 RAM (up to 4GB)
+Gigabit Ethernet
+Micro SD Slot
+eMMC Module Slot
+SPI Flash 128Mbit
+4K Digital Video Out
+2x USB 2.0 Host
+1x USB 3.0 Host
+PI-2 Bus
+PI-P5+ BUS
+IR R/X Port
+Real Time Clock Port (RTC)
+Power Over Ethernet (POE) (when using optional HAT module)
+A/V Jack
+Power, Reset and Recovery buttons
+3.5mm Barrel Power (5V 3A) Port
+```
+
+**LCD 16x2**
+
+Dot Matrix LED Display, 7-Segment LED Display, OLED Display, TFT LCD Screen Display
+
+```
+Operating Voltage is 4.7V to 5.3V
+Current consumption is 1mA without backlight
+Alphanumeric LCD display module, meaning can display alphabets and numbers
+Consists of two rows and each row can print 16 characters.
+Each character is build by a 5×8 pixel box
+Can work on both 8-bit and 4-bit mode
+It can also display any custom generated characters
+Available in Green and Blue Backlight
+```
+
+**I2C Module**
+
+This LCD I2C interface adapter can be added to a 16 x 2 or 20 x 4 character LCD display with a standard parallel interface to make it I2C compatible.
+
+```
+Provides I2C to parallel data conversion
+Backlight enable jumper
+Contrast control potentiometer
+0x27 I2C default address.  Jumper selectable from 0x20 – 0x27
+5V operation typical, 3.3V if the LCD supports it
+```
 ## Protocols
 
 ### MQTT Protocol
