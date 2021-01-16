@@ -52,11 +52,16 @@ Speedbot is coded using Python3. The reason I chose Python to build Speedbot is 
 | requests | 2.21.0 |
 
 ## Architectural diagram
+
 ### Bread Board
+
 ### Schematic
+
 # Part 2 - Build the Speedbot
+
 ## Set up the Speedbot
-## Build a simple MQTT broker
+
+## Build a simple MQTT server
 In order to develop and test the Speedbot and the MQTT protocol, you will need to deploy a simple broker to recive the data sent by the Speedbot. The MQTT protocol uses SSL to protect data, and as a best practice should be used in IoT communication channels. The MQTT protocol is used in IoT applications because of it speed and the fault tolerant nature of the protocol.
 
 MQTT - https://mqtt.org/
@@ -191,7 +196,7 @@ Available in Green and Blue Backlight
 
 The LCD canbe used on its own or with the I2C module, the Speedbot uses the I2C module and a Python I2C library to communicate through GPIO with the module.
 
-<img src="./images/i2c_lcd_small.png">
+**LCD Pin Out**
 
 <img src="./images/lcd_pin_out.png">
 
@@ -210,7 +215,7 @@ Contrast control potentiometer
 ```
 ## Protocols
 
-### MQTT Protocol
+### MQTT
 
 <img src="./images/MQTT-hor.png">
 
@@ -219,5 +224,13 @@ MQTT is a lightweight publish/subscribe messaging protocol designed for M2M (mac
 URL - http://mqtt.org
 
 URl - http://www.steves-internet-guide.com/mqtt/
+
+### I2C
+
+I2C is a serial protocol that allows for synchronous communication between devices.
+
+<img src="./images/I2cproto.png">
+
+URL - https://www.circuitbasics.com/basics-of-the-i2c-communication-protocol/
 
 # Part 4 - Extra Credit
