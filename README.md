@@ -176,7 +176,7 @@ Power, Reset and Recovery buttons
 
 Dot Matrix LED Display, 7-Segment LED Display, OLED Display, TFT LCD Screen Display
 
-<img src="./images/lcd.jpeg">
+<img src="./images/lcd.jpeg" =250x>
 
 ```
 Operating Voltage is 4.7V to 5.3V
