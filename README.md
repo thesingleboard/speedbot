@@ -61,6 +61,96 @@ Speedbot is coded using Python3. The reason I chose Python to build Speedbot is 
 
 ## Set up the Speedbot
 
+Run the following script to set up the speedbot device, and pull the stable container that will run the software.
+```
+#!/bin/bash -x
+
+sudo apt-get update
+sudo apt-get upgrade
+
+apt install docker.io
+systemctl enable docker
+systemctl start docker
+
+apt-get install network-manager
+systemctl start NetworkManager.service
+systemctl enable NetworkManager.service
+
+#Generate an unchangable nodeID
+NODEONE=$(($RANDOM % 99999999 + 10000000))
+NODETWO=$(($RANDOM % 99999 + 10000))
+HOSTNAME=ciac-${NODETWO}
+NODEID=000-${NODEONE}-${NODETWO}
+echo $NODEID > /etc/nodeid
+chown speedbot:speedbot /etc/nodeid
+chmod 0444 /etc/nodeid
+
+hostnamectl set-hostname $NODEID
+
+#Create datastores
+mkdir -p /home/speedbot
+mkdir -p /opt/speedbot-data
+
+#speedbot user
+useradd -U -d /home/speedbot -s /bin/bash speedbot
+chown speedbot:speedbot /home/speedbot
+echo -e 'speedbot\nspeedbot\n' | passwd speedbot
+
+#add speedbot to the docker group
+usermod -aG docker speedbot
+
+#set up rbash
+ln -s /bin/bash /bin/rbash
+echo '/bin/rbash' >> /etc/shells
+echo '/bin/admin.sh' >> /etc/shells
+
+#copy botcli
+cp device/botcli.py /opt/botcli.py
+
+#Custom shell for config
+touch /bin/admin.sh
+(
+cat <<'EOP'
+#!/bin/rbash
+python /opt/botcli.py
+EOP
+) >> /bin/admin.sh
+
+chmod +x /bin/admin.sh
+chown speedbot:speedbot /bin/admin.sh
+
+#create an admin for the shell config
+useradd -d /home/admin -g speedbot -s /bin/admin.sh admin
+
+#set admin default password
+echo -e 'password\npassword\n' | passwd admin
+
+# start and stop the container
+cp -f systemd/start-speedbot /bin
+cp -f systemd/stop-speedbot /bin
+cp -f systemd/restart-speedbot /bin
+cp -f systemd/fresh-start-speedbot /bin
+cp -f systemd/factory-reset-speedbot /bin
+
+chmod 755 /bin/start-speedbot
+chmod 755 /bin/stop-speedbot
+chmod 755 /bin/restart-speedbot
+chmod 755 /bin/fresh-start-speedbot
+chmod 755 /bin/factory-reset-speedbot
+
+cp etc/speedbot.cfg /etc/speedbot.cfg
+
+source /etc/speedbot.cfg
+
+#docker pull the latest speedbot
+docker pull speedbot:stable
+#docker tag the latest speedbot for factory reset
+docker tag speedbot:stable factory/speedbot:factory
+
+#fire up the speedbot container as a daemon
+docker run -d -h speedbot --network=host --privileged -p 10500:10500 -v /opt/speedbot-data:/opt/speedbot-data --name speedbot -e PINS=$PINS -e INTERVAL=$INTERVAL -e MQTTBROKER=$MQTTBROKER -e MQTTPORT=$MQTTPORT -e API=$API speedbot:$VERSION
+```
+
 ## Build a simple MQTT server
 In order to develop and test the Speedbot and the MQTT protocol, you will need to deploy a simple broker to recive the data sent by the Speedbot. The MQTT protocol uses SSL to protect data, and as a best practice should be used in IoT communication channels. The MQTT protocol is used in IoT applications because of it speed and the fault tolerant nature of the protocol.
 
