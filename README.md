@@ -150,7 +150,7 @@ A standard Raspberry PI can be used for this project as well, however I am not g
 
 **Rockpi SBC specs**
 
-
+<img src="./images/ROCK64.jpg">
 
 ```
 Rockchip RK3328 Quad-Core SOC with Mali 450MP2
@@ -176,6 +176,8 @@ Power, Reset and Recovery buttons
 
 Dot Matrix LED Display, 7-Segment LED Display, OLED Display, TFT LCD Screen Display
 
+<img src="./images/lcd.jpeg">
+
 ```
 Operating Voltage is 4.7V to 5.3V
 Current consumption is 1mA without backlight
@@ -187,7 +189,15 @@ It can also display any custom generated characters
 Available in Green and Blue Backlight
 ```
 
+The LCD canbe used on its own or with the I2C module, the Speedbot uses the I2C module and a Python I2C library to communicate through GPIO with the module.
+
+<img src="./images/i2c_lcd.png">
+
+<img src="./images/lcd_pin_out.png">
+
 **I2C Module**
+
+<img src="./images/i2cmod.jpg">
 
 This LCD I2C interface adapter can be added to a 16 x 2 or 20 x 4 character LCD display with a standard parallel interface to make it I2C compatible.
 
