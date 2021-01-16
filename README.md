@@ -191,7 +191,7 @@ Available in Green and Blue Backlight
 
 The LCD canbe used on its own or with the I2C module, the Speedbot uses the I2C module and a Python I2C library to communicate through GPIO with the module.
 
-<img src="./images/i2c_lcd.png">
+<img src="./images/i2c_lcd_small.png">
 
 <img src="./images/lcd_pin_out.png">
 
