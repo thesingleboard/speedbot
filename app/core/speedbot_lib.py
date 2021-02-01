@@ -19,7 +19,6 @@ class speedbot():
         #self.client.tls_set(settings.SSLCERTPATH+"/"+settings.SSLCERT,tls_version=ssl.PROTOCOL_TLSv1_2)
         #self.client.tls_insecure_set(True)
 
-
         try:
             #connect to the sqlite process
             self.sqlcon = sqlite3.connect(settings.DB_PATH+'iotDB.db')
@@ -296,29 +295,29 @@ class speedbot():
     '''
 
 ####DB####
-    #def db_insert(self,input_dict):
-    #    """
-    #    DESC: Insert the values in the sqlite DB
-    #    INPUT: input_dict - upload_Mbps
-    #                                  - download_Mbps
-    #                                  - packetloss
-    #                                  - timestamp
-    #                                  - location
-    #                                  - country
-    #                                  - testhost
-    #    OUTPUT: None
-    #    NOTE: None
-    #    """
+    def db_insert(self,input_dict):
+        """
+        DESC: Insert the values in the sqlite DB
+        INPUT: input_dict - upload_Mbps
+                                      - download_Mbps
+                                      - packetloss
+                                      - timestamp
+                                      - location
+                                      - country
+                                      - testhost
+        OUTPUT: None
+        NOTE: None
+        """
         #speedbot (upload real, download real, packetloss integer, timestamp text, location text, country text, testhost text)''
-        #out = True
-        #try:
-        #    logging.info("Inserting speed info into db. %s"%(input_dict))
-        #    self.cursor.execute("INSERT INTO speedbot VALUES ('"+float(input_dict['upload_Mbps'])+"','"+float(input_dict['download_Mbps'])+"','"+int(input_dict['packetloss'])+"','"+str(input_dict['timestamp'])+"','" + str(input_dict('location')) + "','"+str(input_dict['country'])+"','"+str(input_dict['testhost'])+"')")
-        #    self.sqlcon.commit()
-        #except Exception as e:
-        #    out = False
-        #    logging.error(e)
-        #    logging.error("Could not insert data %s into the database"%(input_dict)
+        out = True
+        try:
+            logging.info("Inserting speed info into db. %s"%(input_dict))
+            self.cursor.execute("INSERT INTO speedbot VALUES ('"+float(input_dict['upload_Mbps'])+"','"+float(input_dict['download_Mbps'])+"','"+int(input_dict['packetloss'])+"','"+str(input_dict['timestamp'])+"','" + str(input_dict('location')) + "','"+str(input_dict['country'])+"','"+str(input_dict['testhost'])+"')")
+            self.sqlcon.commit()
+        except Exception as e:
+            out = False
+            logging.error(e)
+            logging.error("Could not insert data %s into the database"%(input_dict))
 
     def db_read(self):
         pass
