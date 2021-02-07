@@ -7,6 +7,9 @@ import logging
 from lcd_lib import LCD
 from speedbot_lib import speedbot
 
+def turn_off_lcd():
+    pass
+
 def main():
     """
     DESC: Main method
@@ -19,6 +22,13 @@ def main():
 
     while True:
         speedout = None
+
+        #turn on the LCD
+        #try:
+        #    lcd.lcdon()
+        #except Exception as e:
+        #    logging.error(e)
+         #   logging.error('Could not turn the lcd on.')
 
         try:
             #clear everything 
@@ -45,6 +55,13 @@ def main():
         except Exception as e:
             print(e)
             logging.error('Could not display current speed.')
+
+        #try:
+        #    time.sleep(settings.LCD_OFF)
+        #    lcd.lcdoff()
+        #except Exception as e:
+        #    logging.error(e)
+        #    logging.error('Could not turn off the lcd.')
 
         time.sleep(settings.INTERVAL)
 

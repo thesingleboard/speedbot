@@ -42,6 +42,8 @@ TEMP_SCALE = os.getenv('TEMP_SCALE','F')
 
 LCD_ADDR = 0x3f
 
+LCD_OFF = os.getenv('LCD_OFF',5)
+
 CONFIG = {  'API':API,
             'HOSTNAME':HOSTNAME,
             'PINS':PINS,
@@ -52,5 +54,6 @@ CONFIG = {  'API':API,
             #'SSLCERT':SSLCERT,
             'STARTOFTIME':STARTOFTIME,
             'LCD_ADDR':LCD_ADDR,
-            'TEMP_SCALE':TEMP_SCALE
+            'TEMP_SCALE':TEMP_SCALE,
+            'LCD_OFF':LCD_OFF
             }

@@ -28,7 +28,7 @@ class speedbot():
             logging.warn("Could not connect to the IOT sqlite DB.")
 
         try:
-            self.cursor.execute('''CREATE TABLE speedbot (upload real, download real, packetloss integer, timestamp text, location text, country text, testhost text)''')
+            self.cursor.execute('''CREATE TABLE speedbot (upload_Mbps text, download_Mbps text, packetloss text, timestamp text, location text, country text, testhost text)''')
         except Exception as e:
             logging.warn(e)
             logging.warn("Speedbot table already exists.")
@@ -308,14 +308,11 @@ class speedbot():
         OUTPUT: None
         NOTE: None
         """
-        #speedbot (upload real, download real, packetloss integer, timestamp text, location text, country text, testhost text)''
-        out = True
         try:
             logging.info("Inserting speed info into db. %s"%(input_dict))
-            self.cursor.execute("INSERT INTO speedbot VALUES ('"+float(input_dict['upload_Mbps'])+"','"+float(input_dict['download_Mbps'])+"','"+int(input_dict['packetloss'])+"','"+str(input_dict['timestamp'])+"','" + str(input_dict('location')) + "','"+str(input_dict['country'])+"','"+str(input_dict['testhost'])+"')")
+            self.cursor.execute("INSERT INTO speedbot VALUES ('"+input_dict['upload_Mbps']+"','"+input_dict['download_Mbps']+"','"+input_dict['packetloss']+"','"+input_dict['timestamp']+"','" + input_dict['location'] + "','"+input_dict['country']+"','"+input_dict['testhost']+"')")
             self.sqlcon.commit()
         except Exception as e:
-            out = False
             logging.error(e)
             logging.error("Could not insert data %s into the database"%(input_dict))
 
@@ -342,12 +339,19 @@ class speedbot():
         #download megabytes
         down = ((int(output['download']['bytes']) * 8) / int(output['download']['elapsed'])) /1000
 
-        #try:
-            #dbInsert
-        #    logging.info("Inserting into DB.")
-        #except Exception as e:
-         #   logging.error("could not insert ")
-            
+        try:
+            self.db_insert({'upload_Mbps':str(up),
+                                      'download_Mbps':str(down),
+                                      'packetloss':str(output['packetLoss']),
+                                      'timestamp':str(output['timestamp']),
+                                      'location':str(output['server']['location']),
+                                      'country':str(output['server']['country']),
+                                      'testhost':str(output['server']['host'])
+                                      })
+            logging.info("Inserted speed info into Speedbot DB.")
+        except Exception as e:
+            logging.error("could not insert ")
+
         logging.info({'timestamp':output['timestamp'],'upload_Mbps':up,'download_Mbps':down,'location':output['server']['location'],'country':output['server']['country'],'testhost':output['server']['host'],'packetloss':output['packetLoss']})
         return {'timestamp':output['timestamp'], 'external_ip':output['interface']['externalIp'], 'upload_Mbps':up, 'download_Mbps':down, 'server_location':output['server']['location'], 'country':output['server']['country'], 'testhost':output['server']['host'], 'packetloss':output['packetLoss']}
 
