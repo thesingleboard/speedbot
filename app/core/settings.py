@@ -40,7 +40,8 @@ STARTOFTIME = calendar.timegm(time.gmtime())
 
 TEMP_SCALE = os.getenv('TEMP_SCALE','F')
 
-LCD_ADDR = 0x3f
+#LCD_ADDR = 0x3f
+LCD_ADDR = 0x27
 
 LCD_OFF = os.getenv('LCD_OFF',5)
 
