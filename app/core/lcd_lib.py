@@ -104,4 +104,4 @@ class LCD:
     def lcdon(self):
         #Jonathan Arrance
         # power on LCD
-        self.lcd_byte(0x0c, self.LCD_CMD)
+        self.lcd_byte(0x08, self.LCD_CMD)

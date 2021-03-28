@@ -325,7 +325,7 @@ class speedbot():
 ####System#####
     def check_speed(self):
         #run the OOkla speed test.
-        args = ['speedtest', '--accept-license', '-p', 'no', '-f', 'json']
+        args = ['speedtest', '--accept-license','-I','eth0','-p', 'no', '-f', 'json']
         try:
             cmd = subprocess.Popen(args, stdout=subprocess.PIPE)
             output = json.loads(cmd.communicate()[0].decode("utf-8").rstrip())

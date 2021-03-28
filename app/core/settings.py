@@ -16,7 +16,7 @@ PINS = os.getenv('PINS',None)
 PINS = PINS.split(',')
 
 #The time interval
-INTERVAL = os.getenv('INTERVAL',10)
+INTERVAL = os.getenv('INTERVAL',600)
 INTERVAL = int(INTERVAL)
 
 #physical network name wlan0 or eth0
@@ -24,6 +24,7 @@ PHYSNET = os.getenv('PHYSNET',None)
 
 #DB directory
 DB_PATH = os.getenv('DB_PATH','/opt/speedbot-data/')
+PROM_PORT = int(os.getenv('PROM_PORT','9002'))
 
 #mgtt broker host, IP or URL
 #MQTTBROKER = os.getenv('MQTTBROKER',None)
@@ -40,8 +41,8 @@ STARTOFTIME = calendar.timegm(time.gmtime())
 
 TEMP_SCALE = os.getenv('TEMP_SCALE','F')
 
-#LCD_ADDR = 0x3f
-LCD_ADDR = 0x27
+LCD_ADDR = 0x3f
+#LCD_ADDR = 0x27
 
 LCD_OFF = os.getenv('LCD_OFF',5)
 
