@@ -4,7 +4,8 @@ import settings
 import time
 import logging
 
-from lcd_lib import LCD
+#from lcd_lib import LCD
+from lcd_lib_2004 import LCD
 from speedbot_lib import speedbot
 from prometheus_client import Gauge, start_http_server
 
