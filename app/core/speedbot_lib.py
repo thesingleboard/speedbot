@@ -117,6 +117,21 @@ class speedbot():
 
         return output
 
+    def get_ext_ip(self):
+        """
+        DESC: Get the external ip of the NAT if using one.
+        INPUT: None
+        OUTPUT:  External ipv4 ip address
+        NOTES: Can also get the external IP of the network(outward faceing NAT) from the check_speed function
+        """
+        try:
+            output = requests.get(" http://whatismyip.akamai.com/")
+        except Exception as e:
+            output = 'unknown'
+            logging.error('Could not determin the IP')
+
+        return output.text
+
     def get_uptime(self):
         """
         DESC: Run get system uptime
@@ -239,11 +254,18 @@ class speedbot():
         hostname = self.get_hostname()
         cpu_temp = self.get_cpu_temp()
         mem = self.get_system_memory()
-        ip = self.get_nic_ip_info(settings.PHYSNET)
+        #ip = self.get_network_status(settings.PHYSNET)
         uptime = self.get_uptime()
-        nodeid = self.get_node_id()
+        nodeid = self.get_hostname()
 
-        return {'hostname':hostname,'cpu_temp':cpu_temp['temp'],'total_mem':mem['total_mem'],'ip':ip['ip'],'uptime':uptime,'node_id':nodeid}
+        return {'hostname':hostname,
+                    'cpu_temp':cpu_temp['temp'],
+                    'scale':cpu_temp['scale'],
+                    'total_mem':mem['total_mem'],
+                    #'ip':ip['ip'],
+                    'uptime':uptime,
+                    'node_id':nodeid
+                    }
 
 ####MQTT######
     '''
