@@ -28,19 +28,10 @@ class speedbot():
             logging.warn("Could not connect to the IOT sqlite DB.")
 
         try:
-            self.cursor.execute('''CREATE TABLE speedbot (upload real, download real, packetloss integer, timestamp text, location text, country text, testhost text)''')
+            self.cursor.execute('''CREATE TABLE speedbot (upload_Mbps text, download_Mbps text, packetloss text, timestamp text, location text, country text, testhost text)''')
         except Exception as e:
             logging.warn(e)
             logging.warn("Speedbot table already exists.")
-
-        """
-        try:
-            self.client.connect(settings.MQTTBROKER, settings.MQTTPORT, 60)
-            self.client.loop_start()
-        except Exception as e:
-            logging.error(e)
-            logging.error("Could not connect to the MQTT Broker")
-        """
 
     def get_hostname(self):
         """
@@ -116,6 +107,21 @@ class speedbot():
             logging.error('Could not determin the location')
 
         return output
+
+    def get_ext_ip(self):
+        """
+        DESC: Get the external ip of the NAT if using one.
+        INPUT: None
+        OUTPUT:  External ipv4 ip address
+        NOTES: Can also get the external IP of the network(outward faceing NAT) from the check_speed function
+        """
+        try:
+            output = requests.get(" http://whatismyip.akamai.com/")
+        except Exception as e:
+            output = 'unknown'
+            logging.error('Could not determin the IP')
+
+        return output.text
 
     def get_uptime(self):
         """
@@ -239,60 +245,18 @@ class speedbot():
         hostname = self.get_hostname()
         cpu_temp = self.get_cpu_temp()
         mem = self.get_system_memory()
-        ip = self.get_nic_ip_info(settings.PHYSNET)
+        #ip = self.get_network_status(settings.PHYSNET)
         uptime = self.get_uptime()
-        nodeid = self.get_node_id()
+        nodeid = self.get_hostname()
 
-        return {'hostname':hostname,'cpu_temp':cpu_temp['temp'],'total_mem':mem['total_mem'],'ip':ip['ip'],'uptime':uptime,'node_id':nodeid}
-
-####MQTT######
-    '''
-    def send_data_mqtt(self,input_dict):
-        """
-        DESC: send the sensor readings to the MQTT server
-        INPUT: input_dict - sensor
-                          - temp
-                          - scale - F/C
-                          - humidity
-        OUTPUT: None
-        NOTE: None
-        """
-        #send a mesage to the MQTT broker, pub
-        try:
-            self.client.publish(settings.HOSTNAME+"/"+input_dict['sensor']+"/temperature",str(input_dict['temp'])+""+input_dict['scale'])
-            self.client.publish(settings.HOSTNAME+"/"+input_dict['sensor']+"/humidity",str(input_dict['humidity']))
-        except Exception as e:
-            logging.error(e)
-            logging.error("Could not send messages to MQTT broker")
-
-    def send_status_mqtt(self,input_dict):
-        """
-        DESC: send the device status to the MQTT server
-        INPUT: input_dict - cpu_id
-                          - cpu_temp
-                          - cpu_voltage
-                          - cpu_clock
-                          - system_memory
-                          - system_uptime
-                          - network_tx_stats
-                          - network_rx_stats
-        OUTPUT: None
-        NOTE: None
-        """
-
-        try:
-            self.client.publish(settings.HOSTNAME+"/"+input_dict['cpu_id']+"/status",input_dict)
-        except Exception as e:
-            logging.error(e)
-            logging.error("Could not send messages to MQTT broker")
-
-    def recieve_mqtt(self,input_array):
-        """
-        INPUT: input_array - array of topics to subscribe to.
-        """
-        #get a message from the MQTT broker, sub 
-        self.subscribe(input_array)
-    '''
+        return {'hostname':hostname,
+                    'cpu_temp':cpu_temp['temp'],
+                    'scale':cpu_temp['scale'],
+                    'total_mem':mem['total_mem'],
+                    #'ip':ip['ip'],
+                    'uptime':uptime,
+                    'node_id':nodeid
+                    }
 
 ####DB####
     def db_insert(self,input_dict):
@@ -308,14 +272,11 @@ class speedbot():
         OUTPUT: None
         NOTE: None
         """
-        #speedbot (upload real, download real, packetloss integer, timestamp text, location text, country text, testhost text)''
-        out = True
         try:
             logging.info("Inserting speed info into db. %s"%(input_dict))
-            self.cursor.execute("INSERT INTO speedbot VALUES ('"+float(input_dict['upload_Mbps'])+"','"+float(input_dict['download_Mbps'])+"','"+int(input_dict['packetloss'])+"','"+str(input_dict['timestamp'])+"','" + str(input_dict('location')) + "','"+str(input_dict['country'])+"','"+str(input_dict['testhost'])+"')")
+            self.cursor.execute("INSERT INTO speedbot VALUES ('"+input_dict['upload_Mbps']+"','"+input_dict['download_Mbps']+"','"+input_dict['packetloss']+"','"+input_dict['timestamp']+"','" + input_dict['location'] + "','"+input_dict['country']+"','"+input_dict['testhost']+"')")
             self.sqlcon.commit()
         except Exception as e:
-            out = False
             logging.error(e)
             logging.error("Could not insert data %s into the database"%(input_dict))
 
@@ -328,7 +289,7 @@ class speedbot():
 ####System#####
     def check_speed(self):
         #run the OOkla speed test.
-        args = ['speedtest', '--accept-license', '-p', 'no', '-f', 'json']
+        args = ['speedtest', '--accept-license','-I','eth0','-p', 'no', '-f', 'json']
         try:
             cmd = subprocess.Popen(args, stdout=subprocess.PIPE)
             output = json.loads(cmd.communicate()[0].decode("utf-8").rstrip())
@@ -342,12 +303,19 @@ class speedbot():
         #download megabytes
         down = ((int(output['download']['bytes']) * 8) / int(output['download']['elapsed'])) /1000
 
-        #try:
-            #dbInsert
-        #    logging.info("Inserting into DB.")
-        #except Exception as e:
-         #   logging.error("could not insert ")
-            
+        try:
+            self.db_insert({'upload_Mbps':str(up),
+                                      'download_Mbps':str(down),
+                                      'packetloss':str(output['packetLoss']),
+                                      'timestamp':str(output['timestamp']),
+                                      'location':str(output['server']['location']),
+                                      'country':str(output['server']['country']),
+                                      'testhost':str(output['server']['host'])
+                                      })
+            logging.info("Inserted speed info into Speedbot DB.")
+        except Exception as e:
+            logging.error("could not insert ")
+
         logging.info({'timestamp':output['timestamp'],'upload_Mbps':up,'download_Mbps':down,'location':output['server']['location'],'country':output['server']['country'],'testhost':output['server']['host'],'packetloss':output['packetLoss']})
         return {'timestamp':output['timestamp'], 'external_ip':output['interface']['externalIp'], 'upload_Mbps':up, 'download_Mbps':down, 'server_location':output['server']['location'], 'country':output['server']['country'], 'testhost':output['server']['host'], 'packetloss':output['packetLoss']}
 

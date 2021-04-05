@@ -41,12 +41,10 @@ Speedbot is coded using Python3. The reason I chose Python to build Speedbot is 
 ## Python library versions
 | Library | Version  |
 | ------------ | ------------ |
-| rpi.gpio |  0.7.0 |
 | jinja2 | 2.10.1  |
 | docker | 4.4.1 |
 | adafruit-blinka |  4.2.0 |
 | schedule | 0.6.0  |
-| adafruit-pureio | 1.0.4 |
 | paho-mqtt | 1.5.0 |
 | gunicorn | 20.0.4 |
 | requests | 2.21.0 |
