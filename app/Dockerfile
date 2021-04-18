@@ -36,8 +36,12 @@ ADD /R64 /usr/local/lib/python3.8/
 
 ADD core/speedbot.py $INSTALL_PATH
 ADD core/speedbot_lib.py $INSTALL_PATH
+ADD core/speed_api.py $INSTALL_PATH
 ADD core/lcd_lib.py $INSTALL_PATH
 ADD core/run-app.py $INSTALL_PATH
+ADD core/lcd_lib_2004.py $INSTALL_PATH
+ADD core/prom_lib.py $INSTALL_PATH
+ADD core/mqtt_lib.py $INSTALL_PATH
 ADD core/entrypoint.sh $INSTALLPATH
 ADD core/settings.py $INSTALL_PATH
 ADD web/botapi.py $INTERFACE

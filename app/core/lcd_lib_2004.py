@@ -79,7 +79,7 @@ class LCD:
         time.sleep(self.E_DELAY)
 
     def message(self, string, line = 1):
-        # display message string on LCD line 1 or 2
+        # display message string on LCD line 1 - 4
         if line == 1:
             lcd_line = self.LCD_LINE_1
         elif line == 2:

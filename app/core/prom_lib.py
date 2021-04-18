@@ -1,69 +1,96 @@
 import os
 import settings
+import logging
+from prometheus_client import start_http_server
+from prometheus_client import Gauge
 
 class prometheus():
     def __init__(self):
-        pass
-    
-    def emit(self,input_dict):
         """
-        DESC: 
+        DESC: Initialize 
         INPUT: 
         OUTPUT: None
         NOTE: None
         """
-        pass
+        logging.info("Starting Prometheus scrape endpoint.")
+        #simple internal http server used as a scrape endpoint.
+        #try:
+        #except Exception as e:
+        #    logging.error(e)
+        #    logging.error("Could not start Prometheus scrape endpoint.")
         
-    def _used_memory(self):
-        """
-        DESC: 
-        INPUT: 
-        OUTPUT: None
-        NOTE: None
-        """
-        pass
+    def start_server(self):
+        start_http_server(9002)
+        self.used_mem = Gauge('speedbot_used_memory', 'Speedbot Used Memory')
+        self.free_mem = Gauge('speedbot_free_memory', 'Speedbot Free Memory')
+        self.upload_speed = Gauge('speedbot_upload_in_Mbps', 'Upload speed in Mbps')
+        self.download_speed = Gauge('speedbot_download_in_Mbps', 'Download speed in Mbps')
+        self.packetloss = Gauge('speedbot_packetloss', 'Packet loss')
+        self.jitter = Gauge('speedbot_jitter', 'jitter')
     
-    def _free_memory(self):
+    def network_spec(self,input_dict):
         """
-        DESC: 
-        INPUT: 
+        DESC: Emit the used and free memory
+        INPUT: input_dict - packetloss
+                          - jitter
         OUTPUT: None
-        NOTE: None
+        NOTE: This is a Gauge
         """
-        pass
-    
-    def _used_swap(self):
-        """
-        DESC: 
-        INPUT: 
-        OUTPUT: None
-        NOTE: None
-        """
-        pass
+        try:
+            logging.info("Emitting network packetloss.")
+            self.packetloss.set(input_dict['packetloss'])
+        except Exception as e:
+            logging.error(e)
+            logging.error("Could not emit the network packetloss.")
+            
+        try:
+            logging.info("Emitting network jitter.")
+            self.jitter.set(input_dict['jitter'])
+        except Exception as e:
+            logging.error(e)
+            logging.error("Could not emit the network jitter.")
         
-    def _free_swap(self):
-        """
-        DESC: 
-        INPUT: 
-        OUTPUT: None
-        NOTE: None
-        """
-        pass
         
-    def _upload(self):
+    def memory(self,input_dict):
         """
-        DESC: 
-        INPUT: 
+        DESC: Emit the used and free memory
+        INPUT: input_dict - free
+                          - used
         OUTPUT: None
-        NOTE: None
+        NOTE: This is a Gauge
         """
-        pass
-    
-    def _download(self):
+        try:
+            logging.info("Emitting the used memory.")
+            self.used_mem.set(input_dict['used'])
+        except Exception as e:
+            logging.warn(e)
+            logging.warn("Could not gauge used memory.")
+        
+        try:
+            logging.info("Emitting the free memory.")
+            self.free_mem.set(input_dict['free'])
+        except Exception as e:
+            logging.warn(e)
+            logging.warn("Could not gauge free memory.")
+        
+    def network_speed(self,input_dict):
         """
-        DESC: 
-        INPUT: 
+        DESC: Emit the upload and download speed measured by the speedbot.
+        INPUT: input_dict - upload
+                          - download
         OUTPUT: None
-        NOTE: None
+        NOTE: This is a Gauge
         """
-        pass
+        try:
+            logging.info("Emitting upload speed.")
+            self.upload_speed.set(input_dict['upload'])
+        except Exception as e:
+            logging.warn(e)
+            logging.warn("Could not gauge upload speed.")
+        
+        try:
+            logging.info("Emitting download speed.")
+            self.download_speed.set(input_dict['download'])
+        except Exception as e:
+            logging.warn(e)
+            logging.warn("Could not gauge download speed.")
