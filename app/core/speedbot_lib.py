@@ -11,6 +11,8 @@ import requests
 import json
 import paho.mqtt.client as paho
 
+from prom_lib import prometheus as prom
+
 class speedbot():
 
     def __init__(self):
@@ -18,6 +20,12 @@ class speedbot():
         #self.client = paho.Client()
         #self.client.tls_set(settings.SSLCERTPATH+"/"+settings.SSLCERT,tls_version=ssl.PROTOCOL_TLSv1_2)
         #self.client.tls_insecure_set(True)
+
+        try:
+            self.emit = prom()
+        except Exception as e:
+            logging.warn(e)
+            logging.warn("Can not emit Prometheus metrics.")
 
         try:
             #connect to the sqlite process
@@ -116,7 +124,7 @@ class speedbot():
         NOTES: Can also get the external IP of the network(outward faceing NAT) from the check_speed function
         """
         try:
-            output = requests.get(" http://whatismyip.akamai.com/")
+            output = requests.get("http://whatismyip.akamai.com/")
         except Exception as e:
             output = 'unknown'
             logging.error('Could not determin the IP')
@@ -263,12 +271,12 @@ class speedbot():
         """
         DESC: Insert the values in the sqlite DB
         INPUT: input_dict - upload_Mbps
-                                      - download_Mbps
-                                      - packetloss
-                                      - timestamp
-                                      - location
-                                      - country
-                                      - testhost
+                        - download_Mbps
+                        - packetloss
+                        - timestamp
+                        - location
+                        - country
+                        - testhost
         OUTPUT: None
         NOTE: None
         """
@@ -289,7 +297,7 @@ class speedbot():
 ####System#####
     def check_speed(self):
         #run the OOkla speed test.
-        args = ['speedtest', '--accept-license','-I','eth0','-p', 'no', '-f', 'json']
+        args = ['speedtest', '--accept-license','-I', settings.PHYSNET, '-p', 'no', '-f', 'json']
         try:
             cmd = subprocess.Popen(args, stdout=subprocess.PIPE)
             output = json.loads(cmd.communicate()[0].decode("utf-8").rstrip())
@@ -305,19 +313,42 @@ class speedbot():
 
         try:
             self.db_insert({'upload_Mbps':str(up),
-                                      'download_Mbps':str(down),
-                                      'packetloss':str(output['packetLoss']),
-                                      'timestamp':str(output['timestamp']),
-                                      'location':str(output['server']['location']),
-                                      'country':str(output['server']['country']),
-                                      'testhost':str(output['server']['host'])
-                                      })
+                            'download_Mbps':str(down),
+                            'packetloss':str(output['packetLoss']),
+                            'timestamp':str(output['timestamp']),
+                            'location':str(output['server']['location']),
+                            'country':str(output['server']['country']),
+                            'testhost':str(output['server']['host'])
+                            })
             logging.info("Inserted speed info into Speedbot DB.")
         except Exception as e:
-            logging.error("could not insert ")
+            logging.error("could not insert: %s"%e)
 
-        logging.info({'timestamp':output['timestamp'],'upload_Mbps':up,'download_Mbps':down,'location':output['server']['location'],'country':output['server']['country'],'testhost':output['server']['host'],'packetloss':output['packetLoss']})
-        return {'timestamp':output['timestamp'], 'external_ip':output['interface']['externalIp'], 'upload_Mbps':up, 'download_Mbps':down, 'server_location':output['server']['location'], 'country':output['server']['country'], 'testhost':output['server']['host'], 'packetloss':output['packetLoss']}
+        logging.info({'timestamp':output['timestamp'],
+                        'external_ip':output['interface']['externalIp'],
+                        'upload_Mbps':up,
+                        'download_Mbps':down,
+                        'server_location':output['server']['location'],
+                        'country':output['server']['country'],
+                        'testhost':output['server']['host'],
+                        'packetloss':output['packetLoss'],
+                        'jitter':output['ping']['jitter'],
+                        'latency':output['ping']['latency'],
+                        'result':output['result']
+                      })
+
+        return {'timestamp':output['timestamp'],
+                'external_ip':output['interface']['externalIp'],
+                'upload_Mbps':up,
+                'download_Mbps':down,
+                'server_location':output['server']['location'],
+                'country':output['server']['country'],
+                'testhost':output['server']['host'],
+                'packetloss':output['packetLoss'],
+                'jitter':output['ping']['jitter'],
+                'latency':output['ping']['latency'],
+                'result':output['result']
+                }
 
     def write_config(self):
         pass
