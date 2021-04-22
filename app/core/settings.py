@@ -41,6 +41,9 @@ LCD_ADDR = 0x27
 #Turn LCD off aftr 5 seconds
 LCD_OFF = os.getenv('LCD_OFF',5)
 
+#docker Repo
+DOCKER_REPO = os.getenv('DOCKER_REPO','192.168.1.32:5000')
+
 #mgtt broker host, IP or URL
 #MQTTBROKER = os.getenv('MQTTBROKER',None)
 
@@ -62,7 +65,7 @@ CONFIG = {  'API':API,
             'LCD_TYPE':LCD_TYPE,
             'PHYSNET':PHYSNET,
             'PROM_PORT':PROM_PORT,
-            
+            'DOCKER_REPO':DOCKER_REPO,
             #'MQTTBROKER':MQTTBROKER,
             #'MQTTPORT':MQTTPORT,
             #'SSLCERTPATH':SSLCERTPATH,
