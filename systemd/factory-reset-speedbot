@@ -1,12 +1,33 @@
 #!/bin/bash
 
 #stop and remove the running container
+sudo docker stop speedbot
+sudo docker rm speedbot
 
 #remove the stable image
+sudo docker rmi speedbot:$VERSION
+sudo docker rmi $DOCKER_REPO/speedbot:stable
 
 #retag the factory to stable
+sudo docker tag speedbot:factory speedbot:$VERSION
 
 #bring up the container
+docker run -d -h speedbot --network=host --privileged -p 10500:10500 \
+            -v /opt/speedbot-data:/opt/speedbot-data \
+            --name speedbot \
+            -e PINS=$PINS \
+            -e INTERVAL=$INTERVAL \
+            -e MQTTBROKER=$MQTTBROKER \
+            -e MQTTPORT=$MQTTPORT \
+            -e API=$API \
+            -e PHYSNET=$PHYSNET \
+            -e TEMP_SCALE=$TEMP_SCALE \
+            -e LCD_ADDR=$LCD_ADDR \
+            -e LCD_OFF=$LCD_OFF \
+            -e LCD_TYPE=$LCD_TYPE \
+            -e PROM_PORT=$PROM_PORT \
+            -e DB_PATH=$DB_PATH \
+            speedbot:$VERSION
 
 #reset device ip
 

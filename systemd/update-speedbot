@@ -10,6 +10,9 @@ docker rm speedbot
 #docker pull speedbot:stable
 docker pull $DOCKER_REPO/speedbot:stable
 
+#tag pulled image
+docker tag $DOCKER_REPO/speedbot:stable speedbot:release
+
 docker run -d -h speedbot --network=host --privileged -p 10500:10500 \
             -v /opt/speedbot-data:/opt/speedbot-data \
             --name speedbot \
