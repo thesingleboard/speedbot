@@ -2,9 +2,27 @@
 
 source /etc/speedbot.cfg
 
+#echo 'speedbotpass' | docker login --username speedbotuser --password-stdin '192.168.1.32:5000'
+
 docker stop speedbot
 docker rm speedbot
 
-docker pull speedbot:stable
+#docker pull speedbot:stable
+docker pull $DOCKER_REPO/speedbot:stable
 
-docker run -d -h speedbot --network=host --privileged -p 10500:10500 -v /opt/speedbot-data:/opt/speedbot-data --name speedbot -e PINS=$PINS -e INTERVAL=$INTERVAL -e MQTTBROKER=$MQTTBROKER -e MQTTPORT=$MQTTPORT -e API=$API speedbot:$VERSION
+docker run -d -h speedbot --network=host --privileged -p 10500:10500 \
+            -v /opt/speedbot-data:/opt/speedbot-data \
+            --name speedbot \
+            -e PINS=$PINS \
+            -e INTERVAL=$INTERVAL \
+            -e MQTTBROKER=$MQTTBROKER \
+            -e MQTTPORT=$MQTTPORT \
+            -e API=$API \
+            -e PHYSNET=$PHYSNET \
+            -e TEMP_SCALE=$TEMP_SCALE \
+            -e LCD_ADDR=$LCD_ADDR \
+            -e LCD_OFF=$LCD_OFF \
+            -e LCD_TYPE=$LCD_TYPE \
+            -e PROM_PORT=$PROM_PORT \
+            -e DB_PATH=$DB_PATH \
+            speedbot:$VERSION
