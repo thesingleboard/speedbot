@@ -7,6 +7,7 @@ from speedbot_lib import speedbot
 from prom_lib import prometheus as prom
 from lcd_lib import LCD as LCD16
 from lcd_lib_2004 import LCD as LCD24
+import liquidcrystal_i2c
 
 def turn_off_lcd():
     pass
@@ -21,21 +22,25 @@ def main():
     lcd = None
     if settings.LCD_TYPE == 2004:
         lcd = LCD24()
+        #this is a hack for now to test out this lcd library, may convert to usethis one.
+        lcdcmd = liquidcrystal_i2c.LiquidCrystal_I2C(0x27, 1, numlines=4)
     elif settings.LCD_TYPE == 1602:
         lcd = LCD16()
 
     sb = speedbot()
     pr = prom()
     pr.start_server()
-    
+
+
+
     while True:
         speedout = None
         #turn on the LCD
-        #try:
-        #    lcd.lcdon()
-        #except Exception as e:
-        #    logging.error(e)
-         #   logging.error('Could not turn the lcd on.')
+        try:
+            lcdcmd.backlight()
+        except Exception as e:
+            logging.error(e)
+            logging.error('Could not turn the lcd on.')
 
         try:
             #clear everything 
@@ -47,6 +52,7 @@ def main():
 
         try:
             speedout = sb.check_speed()
+            print(speedout)
         except Exception as e:
             logging.error('Could not calculate the speed: %s'%(e))
 
@@ -57,36 +63,47 @@ def main():
         except Exception as e:
             logging.error(e)
 
-        #kill the packetloss not found issue
-        for k,v in speedout.items():
-            if k == 'packetloss' and isinstance(v,int) == False:
-                speedout['packetloss'] = 'N/A'
-            elif k == 'packetloss' and isinstance(v,float) == True:
-                speedout['packetloss'] = speedout['packetloss'][:4]
+        #kill the packetloss not found issue, also in case var is empty
+        if speedout:
+            print(speedout)
+            logging.info('Speedout is not empty.')
+            for k,v in speedout.items():
+                if k == 'packetloss' and isinstance(v,int) == False:
+                    speedout['packetloss'] = 'N/A'
+                elif k == 'packetloss' and isinstance(v,float) == True:
+                    speedout['packetloss'] = speedout['packetloss'][:4]
+        else:
+            logging.info('Speedout is empty, filling in with 0.')
+            #hack needs to recursivly redo if it fails
+            speedout = {
+                        'upload_Mbps':0.0000000,
+                        'download_Mbps':0.0000000,
+                        'packetloss':0.0000000,
+                        'jitter':0.000000,
+                        }
 
         try:
             lcd.clear()
-            #cut off everything after the decimal since it is a float
-            #iu = int(speedout['upload_Mbps'])
-            #idown = int(speedout['download_Mbps'])
             if settings.LCD_TYPE == 2004:
+                logging.info('20x4 LCD in use.')
                 lcd.message('Jitter: '+str(speedout['jitter']),3)
                 lcd.message('PacketLoss: '+str(speedout['packetloss']),4)
                 lcd.message('UP: '+str(speedout['upload_Mbps'])[:6]+' Mbps',1)
                 lcd.message('Down: '+str(speedout['download_Mbps'])[:6]+' Mbps',2)
-            elif settings.LCD_TYPE == 1604:   
+            elif settings.LCD_TYPE == 1604:
+                logging.info('16x2 LCD in use.')
                 lcd.message('UP: '+str(speedout['upload_Mbps'])[:6]+' Mbps',1)
                 lcd.message('Down: '+str(speedout['download_Mbps'])[:6]+' Mbps',2)
         except Exception as e:
             print(e)
             logging.error('Could not display current speed.')
 
-       #try:
-        #    time.sleep(settings.LCD_OFF)
-        #    lcd.lcdoff()
-        #except Exception as e:
-        #    logging.error(e)
-        #    logging.error('Could not turn off the lcd.')
+        try:
+            time.sleep(settings.LCD_OFF)
+            lcdcmd.noBacklight()
+        except Exception as e:
+            logging.error(e)
+            logging.error('Could not turn off the lcd.')
 
         time.sleep(settings.INTERVAL)
 

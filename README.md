@@ -1,6 +1,6 @@
 # Speedbot
 
-The speedbot appliance will check your internet upload and download speed on a periodic basis. MQTT can be activated on the speedbot to send data back to an MQTT server to store and analyze metrics.
+The speedbot appliance will check your internet upload and download speed on a periodic basis. Prometheus intrumentation has been done to help track upload and download speed.
 
 ---
 
@@ -9,13 +9,19 @@ The speedbot appliance will check your internet upload and download speed on a p
 If you are a hobbiest you may have all of the parts needed to build out the Speedbot device. 
 * [Iconikal Rockchip RK3328] - The Speedbot computer
 * [16x2 Serial LCD display I2C] - 16 column LCD display.
+* [20x4 Serial LCD display I2C] - 20 column LCD display.
+* [Logic Converter] - needed for 20x4 display
 * [5V 3A Power adapter] - 5V power adapter
 * [Purchase] - Buy the board!
 
 [Iconikal Rockchip RK3328]: <https://liliputing.com/2020/09/this-10-single-board-computer-is-faster-than-a-raspberry-pi-3.html>
-[16x2 Serial LCD display I2C]: <https://circuitdigest.com/article/16x2-lcd-display-module-pinout-datasheet/>
 [5V 3A Power adapter]: <https://www.ebay.com/itm/AC-Converter-Adapter-DC-5V-3A-Power-Supply-Charger-5-5mm-x-2-1mm-US-3000mA-/271505054908>
 [Purchase]: <https://pine64.com/product/rock64-single-board-computer/?v=0446c16e2e66>
+
+### Supported Displays
+[16x2 Serial LCD display I2C]: <https://circuitdigest.com/article/16x2-lcd-display-module-pinout-datasheet/>
+[20x4 Serial LCD display I2C]: <https://protosupplies.com/product/lcd2004-20x4-i2c-blue-lcd-display/>
+[Logic Converter]: <https://phppot.com/iot/guide-to-setup-raspberry-pi-with-lcd-display-using-i2c-backpack/>
 
 ## Software libraries needed
 Speedbot is coded using Python3. The reason I chose Python to build Speedbot is because it is easy to understand and easy to pick up. It is also one of the most popular programming langauges around, and can be used to build everything from simple scripts to machine learning algorythems.
@@ -27,7 +33,8 @@ Speedbot is coded using Python3. The reason I chose Python to build Speedbot is 
 * [Schedule] - The Python time scheduling library.
 * [R64GPIO] - Python class to control Rpi GPIO interface.
 * [jinja2] - Expressive template libraryBlinka.
-* [Pureio] - Pure Python access to SPI and I2C
+* [Pureio] - Pure Python access to SPI and 
+* [Prometheus] - Prometheus Python Library
 
 [Python3]: <https://www.python.org/>
 [PahoMqtt]: <https://www.eclipse.org/paho/>
@@ -37,6 +44,7 @@ Speedbot is coded using Python3. The reason I chose Python to build Speedbot is 
 [jinja2]: <https://pypi.org/project/Jinja2/>
 [Pureio]: <https://github.com/adafruit/Adafruit_Python_PureIO/tree/1.0.4>
 [OS]: <https://www.armbian.com/newsflash/armbian-20-08-caple/>
+[Prometheus]: <https://github.com/prometheus/client_python>
 
 ## Python library versions
 | Library | Version  |
@@ -48,6 +56,7 @@ Speedbot is coded using Python3. The reason I chose Python to build Speedbot is 
 | paho-mqtt | 1.5.0 |
 | gunicorn | 20.0.4 |
 | requests | 2.21.0 |
+| prometheus | 0.9.0
 
 ## Architectural diagram
 

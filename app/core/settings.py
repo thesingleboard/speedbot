@@ -6,6 +6,7 @@ import calendar
 
 #api version
 API = '0.1Alpha'
+VERSION = os.getenv('VERSION','release')
 
 #hostname
 HOSTNAME = socket.gethostname()
@@ -40,6 +41,7 @@ LCD_ADDR = 0x27
 
 #Turn LCD off aftr 5 seconds
 LCD_OFF = os.getenv('LCD_OFF',5)
+LCD_OFF = int(LCD_OFF)
 
 #docker Repo
 DOCKER_REPO = os.getenv('DOCKER_REPO','192.168.1.32:5000')
@@ -66,6 +68,7 @@ CONFIG = {  'API':API,
             'PHYSNET':PHYSNET,
             'PROM_PORT':PROM_PORT,
             'DOCKER_REPO':DOCKER_REPO,
+            'VERSION':VERSION,
             #'MQTTBROKER':MQTTBROKER,
             #'MQTTPORT':MQTTPORT,
             #'SSLCERTPATH':SSLCERTPATH,

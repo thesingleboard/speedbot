@@ -45,6 +45,7 @@ ADD core/prom_lib.py $INSTALL_PATH
 ADD core/mqtt_lib.py $INSTALL_PATH
 ADD core/entrypoint.sh $INSTALLPATH
 ADD core/settings.py $INSTALL_PATH
+ADD core/liquidcrystal_i2c.py $INSTALL_PATH
 ADD web/botapi.py $INTERFACE
 ADD web/interface.py $INTERFACE
 #ADD ca.crt $CERT_PATH
