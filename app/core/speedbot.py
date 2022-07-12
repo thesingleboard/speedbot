@@ -52,6 +52,7 @@ def main():
 
         try:
             speedout = sb.check_speed()
+            print(speedout)
         except Exception as e:
             logging.error('Could not calculate the speed: %s'%(e))
 
@@ -64,6 +65,7 @@ def main():
 
         #kill the packetloss not found issue, also in case var is empty
         if speedout:
+            print(speedout)
             logging.info('Speedout is not empty.')
             for k,v in speedout.items():
                 if k == 'packetloss' and isinstance(v,int) == False:
